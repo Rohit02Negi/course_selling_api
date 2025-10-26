@@ -3,9 +3,9 @@ const { Schema } = mongoose;
 
 const UsersSchema = new Schema({
   email: { type: String, unique: true },
+  password: String,
   firstName: String,
-  lastName: String,
-  password: String
+  lastName: String
 });
 
 const AdminSchema = new Schema({
@@ -28,6 +28,7 @@ const PurchaseSchema = new Schema({
   courseId: Schema.Types.ObjectId,
   purchasedAt: { type: Date, default: Date.now }
 });
+
 
 const UserModel = mongoose.model('User', UsersSchema);
 const AdminModel = mongoose.model('Admin', AdminSchema);
