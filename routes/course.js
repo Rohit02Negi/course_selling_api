@@ -1,12 +1,17 @@
 const { Router } = require('express');
 const courseRouter = Router();
 
-  courseRouter.get("/", (req, res) => {  
+
+ //to get all courses routing 
+  courseRouter.get("/", async (req, res) => {  
+    await CourseModel.find({title});
     res.json({
-      msg: "all courses"
+      msg: "List of all courses",
+      courses: courses
     })
   })
 
+  // to purchase a course routing 
   courseRouter.post("/purchases", (req, res) => {  
 
   })

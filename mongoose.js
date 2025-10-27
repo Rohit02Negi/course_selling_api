@@ -20,7 +20,7 @@ const CourseSchema = new Schema({
   description: String,
   price: Number,
   picture: String, // use URL or base64; change to Buffer if storing binary
-  creatorId: Schema.Types.ObjectId
+  creatorId: Schema.Types.ObjectId,
 });
 
 const PurchaseSchema = new Schema({

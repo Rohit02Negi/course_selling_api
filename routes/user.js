@@ -1,7 +1,6 @@
 const express = require('express');
 const userRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { default: mongoose } = require('mongoose');
 const { UserModel } = require('../mongoose');
 const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
 
@@ -28,15 +27,17 @@ const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
         res.json({ msg: "it's working", user: userInfo });
     });
     
-
     userRouter.post("/signin", async (req, res) => {
       try{ 
+
+        // stored password should be hashed in reall application using bcrypt or similar library
 
         const { email, password } = req.body;
         if (!email || !password) {
           return res.status(400).json({ msg: "Email and password are required" });
         } 
-        const user = await mongoose.findOne({ email }); // Dummy user object for demonstration
+        const user = await UserModel.findOne({ email, password });
+        console.log("Found user:", user);
         if (!user) {
           return res.status(401).json({ msg: "Invalid credentials" });
         }
@@ -45,6 +46,8 @@ const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
           msg: "signin route",
           token: token
         });
+        
+        // try using cookie based authentication
       } catch (err) {
         res.status(500).json({ msg: "Server error",
           error: err.message
