@@ -1,8 +1,9 @@
 const { Router } = require('express');
-const { AdminModel } = require('../mongoose');
+const { AdminModel, CourseModel } = require('../mongoose');
 const jwt = require("jsonwebtoken");
 const admin_middlerware = require('../middleware/admin_middlerware');
 const adminRouter = Router();
+const User_Secret = process.env.JWT_ADMIN_SECRET;
 
 
     adminRouter.post("/signup", async (req, res) => {
@@ -31,9 +32,6 @@ const adminRouter = Router();
 
     adminRouter.post("/signin", async (req, res) => {
            try{ 
-
-        // stored password should be hashed in reall application using bcrypt or similar library
-
         const { email, password } = req.body;
         if (!email || !password) {
           return res.status(400).json({ msg: "Email and password are required" });
@@ -43,7 +41,7 @@ const adminRouter = Router();
         if (!user) {
           return res.status(401).json({ msg: "Invalid credentials" });
         }
-        const token = jwt.sign({ email: email }, User_Secret, { expiresIn: '1h' });
+        const token = jwt.sign({ email: email }, process.env.JWT_ADMIN_SECRET, { expiresIn: '1h' });
         res.json({
           msg: "signin route",
           token: token
@@ -63,28 +61,44 @@ const adminRouter = Router();
   adminRouter.post("/courses", admin_middlerware, async (req, res) => {
       const userId = req.userID;
       const { title, description, price, picture } = req.body;
-      console.log("User ID in admin create course route:", userId);
-
-      await CourseModel.create({
+      
+      let user = await CourseModel.create({
         title,
         description,
         price,
         picture, // use URL or base64; change to Buffer if storing binary
         creatorId: userId
       })
+      
+      console.log("Created course:", user);
+      console.log("User ID in admin create course route:", String(userId));
 
       res.json({msg: " it's working "})
     });
 
     // to update or edit a course routing
-
-    adminRouter.put("course", admin_middlerware, (req, res) => {
-      res.json({msg: " it's working "})
+    adminRouter.put("/course", admin_middlerware, async (req, res) => {
+      try {
+        const userId = req.userID;
+        const { courseId, ...updateData } = req.body;
+        
+        const updatedCourse = await CourseModel.findByIdAndUpdate(courseId, updateData, { new: true });
+        
+        if (!updatedCourse) {
+          return res.status(404).json({ msg: "Course not found" });
+        }
+        
+        res.json({
+          msg: "Course updated successfully",
+          course: updatedCourse
+        });
+      } catch (err) {
+        res.status(500).json({
+          msg: "Error updating course",
+          error: err.message
+        });
+      }
     });
-
-
-
-
 
 
 module.exports = {

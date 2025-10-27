@@ -1,24 +1,20 @@
-
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const  secret  = process.env.JWT_ADMIN_SECRET;
 
-// avoide circular dependency by moving middleware to seperate file
-
-function adminmiddleware(req, res, next) {
-    const gettoken = req.headers.token;
-    const decode = jwt.verify(gettoken, process.env.JWT_ADMIN_SECRET);
-
-    if(decode) {
-        req.userID = me._id;
-        console.log("User ID from middleware:", req.userID);
-        next();
-    }else {
-        res.status(401).json({ msg: "Unauthorized" });
+function admin_middlerware(req, res, next) {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ msg: "No token provided" });
     }
 
+    try {
+        const decoded = jwt.verify(token, secret);
+        req.userID = decoded._id;
+        next();
+    } catch (err) {
+        return res.status(401).json({ msg: "Invalid token" });
+    }
 }
 
-
-module.exports = {
-    adminmiddleware: adminmiddleware
-}
+module.exports = admin_middlerware;
