@@ -5,7 +5,7 @@ const admin_middlerware = require('../middleware/admin_middlerware');
 const adminRouter = Router();
 const User_Secret = process.env.JWT_ADMIN_SECRET;
 
-
+  // Admin signup route
     adminRouter.post("/signup", async (req, res) => {
         const { email, password, firstName, lastName } = req.body;
         console.log("req.body:", req.body);
@@ -29,7 +29,7 @@ const User_Secret = process.env.JWT_ADMIN_SECRET;
         res.json({ msg: "it's working", user: userInfo });
     });
 
-
+    // Admin signin route
     adminRouter.post("/signin", async (req, res) => {
            try{ 
         const { email, password } = req.body;
@@ -80,6 +80,11 @@ const User_Secret = process.env.JWT_ADMIN_SECRET;
       try {
         const userId = req.userID;
         const { courseId, ...updateData } = req.body;
+
+        const admincourse = await CourseModel.findById({userId, _id: courseId});
+        if (!admincourse) {
+          return res.status(404).json({ msg: "Course not found" });
+        }
         
         const updatedCourse = await CourseModel.findByIdAndUpdate(courseId, updateData, { new: true });
         
@@ -99,6 +104,21 @@ const User_Secret = process.env.JWT_ADMIN_SECRET;
       }
     });
 
+    // get all courses
+    // adminRouter.get("/courses", admin_middlerware, async (req, res) => {
+    //   try {
+    //     const courses = await CourseModel.find({}); 
+    //     res.json({
+    //       msg: "Courses retrieved successfully",
+    //       courses: courses
+    //     });
+    //   } catch (err) {
+    //     res.status(500).json({
+    //       msg: "Error retrieving courses",  
+    //       error: err.message
+    //     });
+    //   } 
+    // });
 
 module.exports = {
     adminRouter: adminRouter

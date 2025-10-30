@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { UserModel } = require('../mongoose');
 const user_middleware = require('../middleware/user_middleware');
-const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
+const User_Secret = process.env.JWT_USER_SECRET;
 
     userRouter.post("/signup", async (req, res) => {
         const { email, password, firstName, lastName } = req.body;
@@ -57,22 +57,28 @@ const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
 
     });
 
-    userRouter.get("/courses", user_middleware, (req, res) => { 
-      try {
-      const me = req.userID;
-      console.log("User ID in route:", me); 
-      res.json({
-        msg: "signin route",
-        me
-      })
-      }
-      catch (err) {
-        res.status(500).json({ msg: "Server error",
-          error: err.message
-        });
-      }
-      })
+    // course route for user
+    // userRouter.get("/courses", user_middleware, (req, res) => { 
+    //   try {
+    //   const me = req.userID;
+    //   const { courseId } = req.body;
+
+    //   if (!courseId) {
+    //     return res.status(400).json({ msg: "Course ID is required" });
+    //   }
 
 
+    //   console.log("User ID in route:", me); 
+    //   res.json({
+    //     msg: "signin route",
+    //     me
+    //   })
+    //   }
+    //   catch (err) {
+    //     res.status(500).json({ msg: "Server error",
+    //       error: err.message
+    //     });
+    //   }
+    //   })
 
 module.exports = { userRouter: userRouter };

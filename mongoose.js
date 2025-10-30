@@ -23,17 +23,36 @@ const CourseSchema = new Schema({
   creatorId: Schema.Types.ObjectId,
 });
 
-const PurchaseSchema = new Schema({
-  userId: Schema.Types.ObjectId,
-  courseId: Schema.Types.ObjectId,
-  purchasedAt: { type: Date, default: Date.now }
+// const PurchaseSchema = new Schema({
+//   userId: Schema.Types.ObjectId,
+//   courseId: Schema.Types.ObjectId,
+//   purchasedAt: { type: Date, default: Date.now }
+// });
+
+
+const purchaseSchema = new Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // ⚠️ this name must exactly match the model name
+    required: true,
+  },
+  courseId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course", // ⚠️ must match the Course model name
+    required: true,
+  },
+  purchasedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 
+const PurchaseModel = mongoose.model("Purchase", purchaseSchema);
 const UserModel = mongoose.model('User', UsersSchema);
 const AdminModel = mongoose.model('Admin', AdminSchema);
 const CourseModel = mongoose.model('Course', CourseSchema);
-const PurchaseModel = mongoose.model('Purchase', PurchaseSchema);
+// const PurchaseModel = mongoose.model('Purchase', PurchaseSchema);
 
 module.exports = {
   UserModel,
