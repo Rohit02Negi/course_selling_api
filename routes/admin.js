@@ -41,8 +41,8 @@ const User_Secret = process.env.JWT_ADMIN_SECRET;
         if (!user) {
           return res.status(401).json({ msg: "Invalid credentials" });
         }
-        const token = jwt.sign({ email: email }, process.env.JWT_ADMIN_SECRET, { expiresIn: '1h' });
-        res.json({
+        const token = jwt.sign({ id: user._id }, process.env.JWT_ADMIN_SECRET, { expiresIn: '1h' });
+        res.json({ 
           msg: "signin route",
           token: token
         });
@@ -57,7 +57,6 @@ const User_Secret = process.env.JWT_ADMIN_SECRET;
     });
 
     // to create a course routing
-
   adminRouter.post("/courses", admin_middlerware, async (req, res) => {
       const userId = req.userID;
       const { title, description, price, picture } = req.body;

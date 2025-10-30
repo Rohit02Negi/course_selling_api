@@ -2,6 +2,7 @@ const express = require('express');
 const userRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { UserModel } = require('../mongoose');
+const user_middleware = require('../middleware/user_middleware');
 const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
 
     userRouter.post("/signup", async (req, res) => {
@@ -41,7 +42,7 @@ const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
         if (!user) {
           return res.status(401).json({ msg: "Invalid credentials" });
         }
-        const token = jwt.sign({ email: email }, User_Secret, { expiresIn: '1h' });
+        const token = jwt.sign({ id : user._id }, User_Secret, { expiresIn: '1h' });
         res.json({
           msg: "signin route",
           token: token
@@ -56,11 +57,21 @@ const User_Secret = 'mynameisrohitnegiandthisisasecretkey';
 
     });
 
-    userRouter.get("/courses/", (req, res) => {  
+    userRouter.get("/courses", user_middleware, (req, res) => { 
+      try {
+      const me = req.userID;
+      console.log("User ID in route:", me); 
       res.json({
-        msg: "signin route"
+        msg: "signin route",
+        me
       })
-    })
+      }
+      catch (err) {
+        res.status(500).json({ msg: "Server error",
+          error: err.message
+        });
+      }
+      })
 
 
 

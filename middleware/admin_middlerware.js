@@ -10,7 +10,7 @@ function admin_middlerware(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, secret);
-        req.userID = decoded._id;
+        req.userID = decoded.id;
         next();
     } catch (err) {
         return res.status(401).json({ msg: "Invalid token" });

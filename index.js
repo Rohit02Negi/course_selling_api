@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(express.json()); // Add this line
 
-
+// importing Routers function
 const { courseRouter } = require('./routes/course')
 const { adminRouter } = require('./routes/admin')
 const { userRouter } = require('./routes/user')
 
-
+// Routes
 app.use('/api/v1/user', userRouter)
 app.use('/api/v1/admin', adminRouter)
 app.use('/api/v1/course', courseRouter)
