@@ -3,10 +3,12 @@ const { AdminModel, CourseModel } = require('../mongoose');
 const jwt = require("jsonwebtoken");
 const admin_middlerware = require('../middleware/admin_middlerware');
 const adminRouter = Router();
-const User_Secret = process.env.JWT_ADMIN_SECRET;
+const { z } = require('zod');
+const bcrypt = require('bcrypt');
 
   // Admin signup route
     adminRouter.post("/signup", async (req, res) => {
+      
         const { email, password, firstName, lastName } = req.body;
         console.log("req.body:", req.body);
 
